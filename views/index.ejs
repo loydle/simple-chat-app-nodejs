@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title Page</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    <style>
+        body {
+            background-color: #34495e;
+        }
+    </style>
+</head>
+
+<body>
+    <br><br>
+
+
+
+    <div class="panel panel-default col-sm-6 col-sm-push-3">
+        <br>
+        <form id="user">
+            <div class="form-group">
+                <input type="text" class="form-control" id="email" placeholder="mail">
+            </div>
+        </form>
+        <div class="page-header text-center">
+            <h1>Chat 04.<small><i>io</i></small></h1>
+        </div>
+        <div class="panel-body" id="chat-box">
+        </div>
+        <form id="chat-fom" class="text-center">
+            <div class="form-group form-inline">
+                <label class="sr-only" for="">label</label>
+                <input type="text" class="form-control" id="message" placeholder="...">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </form>
+    </div>
+
+
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io.connect()
+
+        $('#chat-form').on('submit', (event) => {
+            event.preventDefault()
+            socket.emit('new-message', $('#message').val())
+            $('#message').val('')
+        })
+        socket.on('recieve-new-message', (message) => {
+            console.log('recieved')
+            $('#chat-box').append(`<li>${message}</li>`)
+        })
+    </script>
+    <script>
+        var users = []
+        var User = function() {
+            email: String
+        }
+        $('#user').on('submit', (event) => {
+            event.preventDefault()
+            var user = new User()
+            user.email = ($('#email').val())
+            socket.emit('login', user.email)
+            users.push(user)
+            $('#chat-box').append('<img src="https://www.gravatar.com/avatar/<%= data.email %>?s=50">')
+        })
+    </script>
+</body>
+
+</html>
